@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoFinds - Sustainable Second-Hand Marketplace</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            padding: 40px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+        }
+        .logo-left {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-right: 25px;
+        }
+        .welcome-text h1 {
+            font-size: 3em;
+            font-weight: 700;
+            margin: 0;
+            line-height: 1.2;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .welcome-text p {
+            font-size: 1.3em;
+            margin: 10px 0 0 0;
+            line-height: 1.2;
+        }
+        .login-container {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .login-btn {
+            background-color: #fff;
+            color: #27ae60;
+            font-weight: 600;
+            padding: 12px 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        .login-btn:hover {
+            background-color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-decoration: none;
+        }
+        /* Features Section */
+        .homepageContainer {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .homepageFeatures {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        .homepageFeature {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-bottom: 4px solid #2ecc71;
+        }
+        .homepageFeature:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 20px rgba(46, 204, 113, 0.15);
+        }
+        .featureIcon {
+            font-size: 3em;
+            color: #2ecc71;
+            margin-bottom: 20px;
+        }
+        .featureTitle {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        .featureDescription {
+            color: #555;
+            line-height: 1.6;
+            font-size: 1em;
+        }
+        /* Footer */
+        .footer {
+            background: #2c3e50;
+            padding: 25px 0;
+            margin-top: 50px;
+            text-align: center;
+            color: white;
+        }
+        .footer p {
+            margin: 0;
+            opacity: 0.8;
+        }
+        /* Loading animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #27ae60;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .welcome-text {
+                margin-left: 0;
+                margin-top: 20px;
+            }
+            .login-container {
+                position: static;
+                transform: none;
+                margin-top: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="header">
+        <div class="header-content">
+            <div class="logo-left">
+                <i class="fas fa-leaf"></i> EcoFinds
+            </div>
+            <div class="welcome-text">
+                <h1>Welcome to EcoFinds</h1>
+                <p>Buy and Sell Pre-Owned Goods Sustainably</p>
+            </div>
+            <div class="login-container">
+                <a href="{{ url_for('login') }}" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+                <a href="{{ url_for('about') }}" class="login-btn">
+                    <i class="fas fa-info-circle"></i> About Us
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="homepageContainer">
+        <div class="homepageFeatures">
+            <div class="homepageFeature">
+                <div class="featureIcon"><i class="fas fa-store"></i></div>
+                <h3 class="featureTitle">Discover Unique Items</h3>
+                <p class="featureDescription">Explore a vast collection of pre-loved goods, from vintage fashion to everyday essentials.</p>
+            </div>
+            <div class="homepageFeature">
+                <div class="featureIcon"><i class="fas fa-leaf"></i></div>
+                <h3 class="featureTitle">Promote Sustainability</h3>
+                <p class="featureDescription">Give your items a second life. Reduce waste and contribute to a circular economy by selling what you no longer need.</p>
+            </div>
+            <div class="homepageFeature">
+                <div class="featureIcon"><i class="fas fa-handshake"></i></div>
+                <h3 class="featureTitle">Connect with Community</h3>
+                <p class="featureDescription">Easily buy from and sell to a community of like-minded, eco-conscious individuals.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2025 EcoFinds. All Rights Reserved.</p>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            // Hide loading overlay when page is ready
+            $('.loading-overlay').fadeOut(500);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Purchase History{% endblock %}
+{% block content %}
+<style>
+    .history-container h1 { text-align: center; margin-bottom: 30px; }
+    .order-card { background: white; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .order-header { background: #2ecc71; color: white; padding: 15px; border-radius: 10px 10px 0 0; display: flex; justify-content: space-between; }
+    .order-body { padding: 15px; }
+</style>
+<div class="history-container">
+    <h1>Your Purchase History</h1>
+    {% for order in orders %}
+        <div class="order-card">
+            <div class="order-header">
+                <span>Order #{{ order.order_no }}</span>
+                <span>Total: ${{ "%.2f"|format(order.total_amount) }}</span>
+            </div>
+            <div class="order-body">
+                <strong>Items:</strong>
+                <ul>
+                {% for item in order.order_items %}
+                    <li>{{ item.product_name }} - ${{ "%.2f"|format(item.sale_price) }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% else %}
+        <p>You have no past orders.</p>
+    {% endfor %}
+</div>
+{% endblock %}

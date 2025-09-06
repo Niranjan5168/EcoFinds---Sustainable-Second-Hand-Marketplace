@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About EcoFinds</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2ecc71; /* Eco-friendly green */
+            --secondary-color: #27ae60;
+        }
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Poppins', sans-serif, 'Segoe UI', Tahoma, Geneva, Verdana;
+        }
+        h1, h2, h3 {
+             font-family: 'Poppins', sans-serif;
+        }
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 0;
+            text-align: center;
+        }
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .navbar-brand-custom {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white !important;
+            text-decoration: none;
+            position: absolute;
+            top: 20px;
+            left: 30px;
+        }
+        .mission-section {
+            background: #fff;
+            padding: 60px 0;
+        }
+        .mission-content {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+            line-height: 1.8;
+        }
+        .mission-content p {
+            font-size: 1.1rem;
+            color: #555;
+        }
+        .how-it-works-section {
+            padding: 60px 0;
+            background-color: #f8f9fa;
+        }
+        .section-heading {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 50px;
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+        .step-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            padding: 30px;
+            text-align: center;
+            border-top: 5px solid var(--primary-color);
+            height: 100%;
+        }
+        .step-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        .step-card h4 {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .step-card p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        .contact-section {
+            background: var(--primary-color);
+            padding: 50px 0;
+            text-align: center;
+            color: white;
+        }
+        .contact-heading {
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .contact-email {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: opacity 0.3s ease;
+        }
+        .contact-email:hover {
+            opacity: 0.8;
+            text-decoration: none;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <a href="{{ url_for('home') }}" class="navbar-brand-custom">
+            <i class="fas fa-leaf"></i> EcoFinds
+        </a>
+        <h1>About Our Marketplace</h1>
+    </div>
+
+    <div class="mission-section">
+        <div class="container">
+            <div class="mission-content">
+                <h2 class="section-heading">Our Mission</h2>
+                <p>
+                    The vision for EcoFinds is to create a vibrant and trusted platform that revolutionizes the way people buy and sell pre-owned goods. We aim to foster a culture of sustainability by extending the lifecycle of products, reducing waste, and providing an accessible and convenient alternative to purchasing new items.
+                </p>
+                <p>
+                    EcoFinds is the go-to destination for a conscious community seeking unique finds and responsible consumption, making sustainable choices easier for everyone.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="how-it-works-section">
+        <div class="container">
+            <h2 class="section-heading">How It Works</h2>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="step-card">
+                         <i class="fas fa-store step-icon"></i>
+                        <h3>For Sellers</h3>
+                        <div class="text-left mt-4">
+                            <h4>1. Create an Account</h4>
+                            <p>Register in seconds to start your selling journey.</p>
+                            <h4>2. List Your Item</h4>
+                            <p>Go to "My Listings", click "Add New Listing", and upload a description and price. It's that simple!</p>
+                            <h4>3. Get Paid</h4>
+                            <p>Once a buyer purchases your item, you've successfully given it a new life and earned some cash.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <div class="step-card">
+                        <i class="fas fa-shopping-basket step-icon"></i>
+                        <h3>For Buyers</h3>
+                        <div class="text-left mt-4">
+                            <h4>1. Browse & Discover</h4>
+                            <p>Explore thousands of unique second-hand items in our shop. Use search and filters to find exactly what you need.</p>
+                            <h4>2. Add to Cart</h4>
+                            <p>Found something you love? Click "Add to Cart" to save it while you continue to shop.</p>
+                            <h4>3. Secure Checkout</h4>
+                            <p>When you're ready, proceed to checkout for a safe and easy purchase process.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="contact-section">
+        <div class="container">
+            <h2 class="contact-heading">Get in Touch</h2>
+            <p>Have questions or feedback? We'd love to hear from you!</p>
+            <a href="mailto:contact@ecofinds.com" class="contact-email">
+                <i class="fas fa-envelope"></i> contact@ecofinds.com
+            </a>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

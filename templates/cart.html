@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Shopping Cart{% endblock %}
+{% block content %}
+<style>
+    .cart-container h1 { text-align: center; margin-bottom: 30px; }
+    .cart-item-card { display: flex; align-items: center; background: white; padding: 20px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .cart-item-card img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; margin-right: 20px; }
+    .item-info { flex-grow: 1; }
+    .item-price { font-weight: 600; color: #2ecc71; }
+    .cart-summary { margin-top: 30px; background: white; padding: 20px; border-radius: 10px; text-align: right; }
+    .buy-now-btn { background: #2ecc71; color: white; border: none; padding: 15px 40px; border-radius: 8px; font-size: 1.2em; cursor: pointer; margin-top: 20px; }
+</style>
+<div class="cart-container">
+    <h1>Your Shopping Cart</h1>
+    <div class="cart-items">
+        {% for item in cart_items %}
+            <div class="cart-item-card">
+                <img src="{{ url_for('static', filename='images/' + item.image_url) }}" alt="{{ item.product_name }}">
+                <div class="item-info">
+                    <h4>{{ item.product_name }}</h4>
+                    <p>{{ item.category }}</p>
+                </div>
+                <div class="item-price">${{ "%.2f"|format(item.subtotal) }}</div>
+            </div>
+        {% else %}
+            <p>Your cart is empty.</p>
+        {% endfor %}
+    </div>
+
+    {% if cart_items %}
+        <div class="cart-summary">
+            <h3>Total: ${{ "%.2f"|format(total) }}</h3>
+            <button onclick="placeOrder()" class="buy-now-btn">Buy Now</button>
+        </div>
+    {% endif %}
+</div>
+<script>
+    function placeOrder() {
+        fetch('/place_order', { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Order placed successfully!');
+                window.location.href = '/purchase_history';
+            } else {
+                alert(data.error || 'Failed to place order');
+            }
+        });
+    }
+</script>
+{% endblock %}
