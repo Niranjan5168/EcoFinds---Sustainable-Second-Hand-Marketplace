@@ -1,164 +1,1136 @@
 {% extends "base.html" %}
-{% block title %}My Profile{% endblock %}
+{% block title %}Dashboard - EcoFinds{% endblock %}
 {% block head %}
 <style>
-    .profile-container {
-        display: grid;
-        grid-template-columns: 300px 1fr;
-        gap: 30px;
-        background-color: #1e1e1e;
-        padding: 30px;
-        border-radius: 12px;
-        border: 1px solid #333;
-    }
-    /* Left Sidebar */
-    .profile-sidebar {
-        text-align: center;
-        padding: 20px;
-        background-color: #2b2b2b;
-        border-radius: 12px;
-    }
-    .profile-picture {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        background-color: #444;
-        margin: 0 auto 20px;
-        border: 4px solid #2ecc71;
-    }
-    .profile-sidebar h2 {
-        margin: 0 0 10px 0;
-    }
-    .profile-sidebar .user-email {
-        color: #aaa;
-        font-size: 0.9em;
-        word-wrap: break-word;
-    }
-    .edit-profile-btn {
-        background: none;
-        border: 1px solid #2ecc71;
-        color: #2ecc71;
-        padding: 10px 20px;
-        border-radius: 8px;
-        cursor: pointer;
-        margin-top: 20px;
-        width: 100%;
-    }
-    .nav-section {
-        margin-top: 30px;
-    }
-    .nav-button {
-        display: block;
-        background-color: #333;
-        color: #e0e0e0;
-        padding: 15px;
-        text-decoration: none;
-        border-radius: 8px;
-        margin-bottom: 10px;
-        text-align: left;
-        font-weight: 500;
-    }
-    .nav-button:hover {
-        background-color: #444;
+    .dashboard-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+        min-height: 80vh;
     }
 
-    /* Right Content Area */
-    .profile-content {
-        padding: 20px;
+    .dashboard-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        position: relative;
     }
-    .form-container {
-        display: none; /* Hidden by default */
+
+    .dashboard-header::before {
+        content: '';
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: var(--gradient-primary);
+        border-radius: 2px;
     }
-    .form-group {
-        margin-bottom: 20px;
+
+    .dashboard-title {
+        font-size: 3rem;
+        font-weight: 700;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+        animation: fadeInUp 0.8s ease-out;
     }
-    .form-group label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 500;
-        color: #aaa;
+
+    .dashboard-subtitle {
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+        animation: fadeInUp 0.8s ease-out 0.2s both;
     }
-    .form-group input {
-        width: 100%;
-        padding: 12px;
-        background-color: #2b2b2b;
-        border: 1px solid #444;
-        border-radius: 8px;
-        color: #e0e0e0;
-        font-size: 1em;
+
+    .dashboard-content {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 2rem;
+        animation: fadeInUp 0.8s ease-out 0.4s both;
     }
-    .save-btn {
-        background: #2ecc71;
-        color: #121212;
-        padding: 12px 25px;
-        border: none;
-        border-radius: 8px;
+
+    /* Sidebar */
+    .dashboard-sidebar {
+        background: var(--surface-dark);
+        border-radius: 20px;
+        padding: 2rem;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-medium);
+        height: fit-content;
+        position: sticky;
+        top: 2rem;
+    }
+
+    .profile-section {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .profile-picture {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto 1rem;
+        border: 4px solid var(--primary-color);
+        background: var(--surface-light);
+        transition: transform 0.3s ease;
         cursor: pointer;
+    }
+
+    .profile-picture:hover {
+        transform: scale(1.05);
+    }
+
+    .profile-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-email {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        word-wrap: break-word;
+    }
+
+    .profile-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin: 1.5rem 0;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 1rem;
+        background: var(--surface-light);
+        border-radius: 10px;
+        border: 1px solid var(--border-color);
+    }
+
+    .stat-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        display: block;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .nav-section {
+        margin-top: 2rem;
+    }
+
+    .nav-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .nav-button {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        background: var(--surface-light);
+        color: var(--text-secondary);
+        padding: 1rem;
+        text-decoration: none;
+        border-radius: 10px;
+        margin-bottom: 0.5rem;
+        transition: all 0.3s ease;
+        border: 1px solid var(--border-color);
+    }
+
+    .nav-button:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: translateX(5px);
+        border-color: var(--primary-color);
+    }
+
+    .nav-button.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    .nav-button i {
+        width: 20px;
+        text-align: center;
+    }
+
+    /* Main Content */
+    .dashboard-main {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: var(--surface-dark);
+        border-radius: 15px;
+        padding: 2rem;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-medium);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: var(--gradient-primary);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-heavy);
+    }
+
+    .stat-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+
+    .stat-card-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .stat-card-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .stat-card-icon.primary {
+        background: rgba(46, 204, 113, 0.2);
+        color: var(--primary-color);
+    }
+
+    .stat-card-icon.secondary {
+        background: rgba(52, 152, 219, 0.2);
+        color: var(--secondary-color);
+    }
+
+    .stat-card-icon.accent {
+        background: rgba(231, 76, 60, 0.2);
+        color: var(--accent-color);
+    }
+
+    .stat-card-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-card-change {
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .stat-card-change.positive {
+        color: var(--primary-color);
+    }
+
+    .stat-card-change.negative {
+        color: var(--accent-color);
+    }
+
+    .chart-container {
+        background: var(--surface-dark);
+        border-radius: 20px;
+        padding: 2rem;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-medium);
+        margin-bottom: 2rem;
+    }
+
+    .chart-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+    }
+
+    .chart-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .chart-controls {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .chart-btn {
+        background: var(--surface-light);
+        color: var(--text-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+
+    .chart-btn:hover,
+    .chart-btn.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    .chart-placeholder {
+        height: 300px;
+        background: var(--surface-light);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        border: 2px dashed var(--border-color);
+    }
+
+    .recent-activity {
+        background: var(--surface-dark);
+        border-radius: 20px;
+        padding: 2rem;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-medium);
+    }
+
+    .activity-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+    }
+
+    .activity-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: var(--surface-light);
+        border-radius: 10px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+    }
+
+    .activity-item:hover {
+        transform: translateX(5px);
+        border-color: var(--primary-color);
+    }
+
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
+
+    .activity-icon.sale {
+        background: rgba(46, 204, 113, 0.2);
+        color: var(--primary-color);
+    }
+
+    .activity-icon.purchase {
+        background: rgba(52, 152, 219, 0.2);
+        color: var(--secondary-color);
+    }
+
+    .activity-icon.listing {
+        background: rgba(231, 76, 60, 0.2);
+        color: var(--accent-color);
+    }
+
+    .activity-content {
+        flex: 1;
+    }
+
+    .activity-description {
+        font-size: 1rem;
+        color: var(--text-primary);
+        margin-bottom: 0.3rem;
+    }
+
+    .activity-time {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+    }
+
+    .activity-amount {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .action-btn {
+        background: var(--gradient-primary);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
         font-weight: 600;
     }
 
-    @media (max-width: 768px) {
-        .profile-container {
+    .action-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(46, 204, 113, 0.3);
+    }
+
+    .action-btn i {
+        font-size: 2rem;
+    }
+
+    .action-btn.secondary {
+        background: var(--gradient-secondary);
+    }
+
+    .action-btn.secondary:hover {
+        box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+    }
+
+    .action-btn.accent {
+        background: var(--gradient-accent);
+    }
+
+    .action-btn.accent:hover {
+        box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3);
+    }
+
+    /* Form Styles */
+    .form-container {
+        background: var(--surface-dark);
+        border-radius: 20px;
+        padding: 2rem;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-medium);
+        display: none;
+    }
+
+    .form-container.active {
+        display: block;
+        animation: slideInUp 0.5s ease-out;
+    }
+
+    .form-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-label {
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-input {
+        background: var(--surface-light);
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        padding: 1rem;
+        color: var(--text-primary);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.1);
+    }
+
+    .form-textarea {
+        background: var(--surface-light);
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        padding: 1rem;
+        color: var(--text-primary);
+        font-size: 1rem;
+        resize: vertical;
+        min-height: 120px;
+        transition: all 0.3s ease;
+    }
+
+    .form-textarea:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.1);
+    }
+
+    .form-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+
+    .btn-save {
+        background: var(--gradient-primary);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 1rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(46, 204, 113, 0.3);
+    }
+
+    .btn-cancel {
+        background: transparent;
+        color: var(--text-secondary);
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        padding: 1rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+        border-color: var(--accent-color);
+        color: var(--accent-color);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .dashboard-content {
             grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .dashboard-sidebar {
+            position: static;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-container {
+            padding: 1rem;
+        }
+
+        .dashboard-title {
+            font-size: 2rem;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .quick-actions {
+            grid-template-columns: 1fr;
+        }
+
+        .chart-controls {
+            flex-wrap: wrap;
+        }
+
+        .form-buttons {
+            flex-direction: column;
         }
     }
 </style>
 {% endblock %}
+
 {% block content %}
-<div class="profile-container">
-    <aside class="profile-sidebar">
-        <div class="profile-picture"></div>
+<div class="dashboard-container">
+    <div class="dashboard-header" data-aos="fade-up">
+        <h1 class="dashboard-title">
+            <i class="fas fa-tachometer-alt"></i>
+            Dashboard
+        </h1>
+        <p class="dashboard-subtitle">Welcome back! Here's what's happening with your account</p>
+    </div>
+
+    <div class="dashboard-content">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" data-aos="fade-right">
+            <div class="profile-section">
+                <img src="{{ url_for('static', filename='images/' + user.profile_image_url) if user and user.profile_image_url else url_for('static', filename='images/default_profile.png') }}" 
+                     alt="Profile Picture" 
+                     class="profile-picture" 
+                     id="profilePicPreview"
+                     onclick="document.getElementById('profile_picture').click()">
+                
+                {% if user %}
+                    <h2 class="profile-name">{{ user.first_name }}</h2>
+                    <p class="profile-email">{{ user.email }}</p>
+                {% endif %}
+
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalListings">{{ user_stats.total_listings if user_stats else 0 }}</span>
+                        <span class="stat-label">Listings</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalSales">{{ user_stats.total_sales if user_stats else 0 }}</span>
+                        <span class="stat-label">Sales</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <h3 class="nav-title">
+                    <i class="fas fa-compass"></i>
+                    Navigation
+                </h3>
+                <a href="{{ url_for('my_listings') }}" class="nav-button">
+                    <i class="fas fa-box"></i>
+                    My Listings
+                </a>
+                <a href="{{ url_for('purchase_history') }}" class="nav-button">
+                    <i class="fas fa-shopping-bag"></i>
+                    My Purchases
+                </a>
+                <a href="{{ url_for('view_cart') }}" class="nav-button">
+                    <i class="fas fa-shopping-cart"></i>
+                    Shopping Cart
+                </a>
+                <button class="nav-button" onclick="toggleEditForm()">
+                    <i class="fas fa-user-edit"></i>
+                    Edit Profile
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main" data-aos="fade-left">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="stat-card-header">
+                        <h3 class="stat-card-title">
+                            <i class="fas fa-chart-line"></i>
+                            Total Revenue
+                        </h3>
+                        <div class="stat-card-icon primary">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" id="totalRevenue">${{ "%.2f"|format(user_stats.total_revenue if user_stats else 0) }}</div>
+                    <div class="stat-card-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        +12.5% from last month
+                    </div>
+                </div>
+
+                <div class="stat-card" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="stat-card-header">
+                        <h3 class="stat-card-title">
+                            <i class="fas fa-eye"></i>
+                            Profile Views
+                        </h3>
+                        <div class="stat-card-icon secondary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" id="profileViews">{{ user_stats.profile_views if user_stats else 0 }}</div>
+                    <div class="stat-card-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        +8.2% from last week
+                    </div>
+                </div>
+
+                <div class="stat-card" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="stat-card-header">
+                        <h3 class="stat-card-title">
+                            <i class="fas fa-star"></i>
+                            Rating
+                        </h3>
+                        <div class="stat-card-icon accent">
+                            <i class="fas fa-thumbs-up"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" id="userRating">{{ "%.1f"|format(user_stats.average_rating if user_stats else 0) }}</div>
+                    <div class="stat-card-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        +0.3 from last month
+                    </div>
+                </div>
+
+                <div class="stat-card" data-aos="zoom-in" data-aos-delay="400">
+                    <div class="stat-card-header">
+                        <h3 class="stat-card-title">
+                            <i class="fas fa-clock"></i>
+                            Active Listings
+                        </h3>
+                        <div class="stat-card-icon primary">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" id="activeListings">{{ user_stats.active_listings if user_stats else 0 }}</div>
+                    <div class="stat-card-change negative">
+                        <i class="fas fa-arrow-down"></i>
+                        -2 from last week
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Section -->
+            <div class="chart-container" data-aos="fade-up" data-aos-delay="500">
+                <div class="chart-header">
+                    <h2 class="chart-title">
+                        <i class="fas fa-chart-area"></i>
+                        Sales Analytics
+                    </h2>
+                    <div class="chart-controls">
+                        <button class="chart-btn active" onclick="changeChartPeriod('week')">Week</button>
+                        <button class="chart-btn" onclick="changeChartPeriod('month')">Month</button>
+                        <button class="chart-btn" onclick="changeChartPeriod('year')">Year</button>
+                    </div>
+                </div>
+                <div class="chart-placeholder" id="chartPlaceholder">
+                    <i class="fas fa-chart-line" style="font-size: 3rem; margin-right: 1rem;"></i>
+                    Sales chart will be displayed here
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="recent-activity" data-aos="fade-up" data-aos-delay="600">
+                <div class="activity-header">
+                    <h2 class="activity-title">
+                        <i class="fas fa-history"></i>
+                        Recent Activity
+                    </h2>
+                </div>
+                <div class="activity-list" id="activityList">
+                    <!-- Activity items will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions" data-aos="fade-up" data-aos-delay="700">
+                <a href="{{ url_for('my_listings') }}" class="action-btn">
+                    <i class="fas fa-plus"></i>
+                    Add New Listing
+                </a>
+                <a href="{{ url_for('shop') }}" class="action-btn secondary">
+                    <i class="fas fa-store"></i>
+                    Browse Shop
+                </a>
+                <a href="{{ url_for('purchase_history') }}" class="action-btn accent">
+                    <i class="fas fa-receipt"></i>
+                    View Orders
+                </a>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Profile Form -->
+    <div id="editFormContainer" class="form-container">
+        <h2 class="form-title">
+            <i class="fas fa-user-edit"></i>
+            Edit Profile
+        </h2>
         {% if user %}
-            <h2>{{ user.first_name }}</h2>
-            <p class="user-email">{{ user.email }}</p>
+        <form method="POST" enctype="multipart/form-data" id="profileForm">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="profile_picture" class="form-label">
+                        <i class="fas fa-camera"></i>
+                        Profile Picture
+                    </label>
+                    <input type="file" id="profile_picture" name="profile_picture" accept="image/*" onchange="previewImage(event)" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="first_name" class="form-label">
+                        <i class="fas fa-user"></i>
+                        Display Name
+                    </label>
+                    <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" required class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="email" class="form-label">
+                        <i class="fas fa-envelope"></i>
+                        Email Address
+                    </label>
+                    <input type="email" id="email" name="email" value="{{ user.email }}" required class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="phone_number" class="form-label">
+                        <i class="fas fa-phone"></i>
+                        Phone Number
+                    </label>
+                    <input type="tel" id="phone_number" name="phone_number" value="{{ user.phone_number }}" required class="form-input">
+                </div>
+                <div class="form-group full-width">
+                    <label for="bio" class="form-label">
+                        <i class="fas fa-info-circle"></i>
+                        Bio
+                    </label>
+                    <textarea id="bio" name="bio" placeholder="Tell us about yourself..." class="form-textarea">{{ user.bio or '' }}</textarea>
+                </div>
+            </div>
+            <input type="hidden" name="last_name" value="{{ user.last_name or '' }}">
+            <div class="form-buttons">
+                <button type="button" class="btn-cancel" onclick="toggleEditForm()">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </button>
+                <button type="submit" class="btn-save">
+                    <i class="fas fa-save"></i>
+                    Save Changes
+                </button>
+            </div>
+        </form>
+        {% else %}
+        <p>Could not load user data.</p>
         {% endif %}
-        <button class="edit-profile-btn" onclick="toggleEditForm()">Edit Profile</button>
-
-        <div class="nav-section">
-            <h4>Navigations</h4>
-            <a href="{{ url_for('my_listings') }}" class="nav-button">My Listings</a>
-            <a href="{{ url_for('purchase_history') }}" class="nav-button">My Purchases</a>
-        </div>
-    </aside>
-
-    <main class="profile-content">
-        <h2>User Information</h2>
-        <p>This section contains your profile details. Click "Edit Profile" to make changes.</p>
-        
-        <div id="editFormContainer" class="form-container">
-            <h3>Edit Your Details</h3>
-            {% if user %}
-            <form method="POST">
-                <div class="form-group">
-                    <label for="first_name">Display Name</label>
-                    <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" required>
-                </div>
-                 <!-- last_name is required by DB but not shown, so we include it as a hidden field -->
-                <input type="hidden" name="last_name" value="{{ user.last_name or '' }}">
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" value="{{ user.email }}" required>
-                </div>
-                <div class="form-group">
-                    <label for="phone_number">Phone Number</label>
-                    <input type="tel" id="phone_number" name="phone_number" value="{{ user.phone_number }}" required>
-                </div>
-                <button type="submit" class="save-btn">Save Changes</button>
-            </form>
-            {% else %}
-            <p>Could not load user data.</p>
-            {% endif %}
-        </div>
-    </main>
+    </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
 <script>
+    // Toggle edit form
     function toggleEditForm() {
         const formContainer = document.getElementById('editFormContainer');
-        if (formContainer.style.display === 'none' || formContainer.style.display === '') {
-            formContainer.style.display = 'block';
-        } else {
-            formContainer.style.display = 'none';
+        formContainer.classList.toggle('active');
+        
+        if (formContainer.classList.contains('active')) {
+            // Scroll to form
+            formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     }
+
+    // Preview image
+    function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = function(){
+            const output = document.getElementById('profilePicPreview');
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    // Change chart period
+    function changeChartPeriod(period) {
+        // Remove active class from all buttons
+        document.querySelectorAll('.chart-btn').forEach(btn => btn.classList.remove('active'));
+        
+        // Add active class to clicked button
+        event.target.classList.add('active');
+        
+        // Update chart placeholder text
+        const placeholder = document.getElementById('chartPlaceholder');
+        placeholder.innerHTML = `
+            <i class="fas fa-chart-line" style="font-size: 3rem; margin-right: 1rem;"></i>
+            Loading ${period} data...
+        `;
+        
+        // Simulate chart loading
+        setTimeout(() => {
+            placeholder.innerHTML = `
+                <i class="fas fa-chart-line" style="font-size: 3rem; margin-right: 1rem;"></i>
+                ${period.charAt(0).toUpperCase() + period.slice(1)} sales chart
+            `;
+        }, 1000);
+    }
+
+    // Generate sample activity data
+    function generateActivityData() {
+        const activities = [
+            {
+                type: 'sale',
+                description: 'Sold "Vintage Camera" to John Doe',
+                time: '2 hours ago',
+                amount: '$45.00',
+                icon: 'fas fa-dollar-sign'
+            },
+            {
+                type: 'purchase',
+                description: 'Purchased "Wireless Headphones"',
+                time: '1 day ago',
+                amount: '$89.99',
+                icon: 'fas fa-shopping-cart'
+            },
+            {
+                type: 'listing',
+                description: 'Added "Antique Book Collection"',
+                time: '3 days ago',
+                amount: '$120.00',
+                icon: 'fas fa-plus'
+            },
+            {
+                type: 'sale',
+                description: 'Sold "Designer Jacket" to Sarah Smith',
+                time: '1 week ago',
+                amount: '$75.00',
+                icon: 'fas fa-dollar-sign'
+            },
+            {
+                type: 'purchase',
+                description: 'Purchased "Laptop Stand"',
+                time: '2 weeks ago',
+                amount: '$25.99',
+                icon: 'fas fa-shopping-cart'
+            }
+        ];
+
+        const activityList = document.getElementById('activityList');
+        activityList.innerHTML = '';
+
+        activities.forEach((activity, index) => {
+            const activityItem = document.createElement('div');
+            activityItem.className = 'activity-item';
+            activityItem.style.animationDelay = `${index * 0.1}s`;
+            
+            activityItem.innerHTML = `
+                <div class="activity-icon ${activity.type}">
+                    <i class="${activity.icon}"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-description">${activity.description}</div>
+                    <div class="activity-time">${activity.time}</div>
+                </div>
+                <div class="activity-amount">${activity.amount}</div>
+            `;
+            
+            activityList.appendChild(activityItem);
+        });
+    }
+
+    // Animate numbers
+    function animateNumbers() {
+        const numbers = document.querySelectorAll('.stat-card-value, .stat-number');
+        
+        numbers.forEach(number => {
+            const target = parseFloat(number.textContent.replace(/[^0-9.-]+/g, ''));
+            const duration = 2000;
+            const increment = target / (duration / 16);
+            let current = 0;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                
+                if (number.id === 'totalRevenue' || number.id.includes('Revenue')) {
+                    number.textContent = `$${current.toFixed(2)}`;
+                } else if (number.id === 'userRating') {
+                    number.textContent = current.toFixed(1);
+                } else {
+                    number.textContent = Math.floor(current);
+                }
+            }, 16);
+        });
+    }
+
+    // Initialize dashboard
+    document.addEventListener('DOMContentLoaded', function() {
+        // Generate activity data
+        generateActivityData();
+        
+        // Animate numbers after a short delay
+        setTimeout(animateNumbers, 500);
+        
+        // Add hover effects to stat cards
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+        
+        // Add click effects to action buttons
+        const actionButtons = document.querySelectorAll('.action-btn');
+        actionButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Create ripple effect
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple');
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+    });
+
+    // Add ripple effect styles
+    const style = document.createElement('style');
+    style.textContent = `
+        .action-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
 </script>
 {% endblock %}

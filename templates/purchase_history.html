@@ -21,18 +21,20 @@
         padding: 20px;
         border: 1px solid #333;
     }
-    .item-image-placeholder {
-        width: 80px;
-        height: 80px;
+    .item-image {
+        width: 100px;
+        height: 100px;
         background-color: #333;
         border-radius: 8px;
         margin-right: 20px;
         flex-shrink: 0;
+        object-fit: cover;
     }
     .item-details { flex-grow: 1; }
     .item-name { font-size: 1.2em; font-weight: 600; margin: 0 0 5px 0; }
     .item-info { color: #aaa; font-size: 0.9em; }
-    .item-price { font-size: 1.2em; font-weight: 600; color: #2ecc71; text-align: right; }
+    .item-info span { margin-right: 15px; }
+    .item-price { font-size: 1.4em; font-weight: 600; color: #2ecc71; text-align: right; }
     .no-history { text-align: center; padding: 40px; background-color: #1e1e1e; border-radius: 12px; }
 
 </style>
@@ -52,8 +54,8 @@
                 <select name="sort_by" onchange="this.form.submit()">
                     <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Sort By: Newest</option>
                     <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Sort By: Oldest</option>
-                    <option value="price_desc" {% if current_sort == 'price_desc' %}selected{% endif %}>Sort By: Price High to Low</option>
-                    <option value="price_asc" {% if current_sort == 'price_asc' %}selected{% endif %}>Sort By: Price Low to High</option>
+                    <option value="price_desc" {% if current_sort == 'price_desc' %}selected{% endif %}>Sort By: Price High-Low</option>
+                    <option value="price_asc" {% if current_sort == 'price_asc' %}selected{% endif %}>Sort By: Price Low-High</option>
                 </select>
             </div>
         </form>
@@ -62,10 +64,13 @@
     <div class="items-grid">
         {% for item in purchased_items %}
             <div class="item-card">
-                <div class="item-image-placeholder"></div>
+                <img src="{{ url_for('static', filename='images/' + item.first_image) if item.first_image and item.first_image != 'placeholder.jpg' else 'https://placehold.co/100x100/333/FFF?text=No+Image' }}" alt="{{ item.product_name }}" class="item-image">
                 <div class="item-details">
                     <h3 class="item-name">{{ item.product_name }}</h3>
-                    <p class="item-info">Category: {{ item.category }} | Seller: {{ item.seller_name }}</p>
+                    <p class="item-info">
+                        <span><strong>Category:</strong> {{ item.category }}</span>
+                        <span><strong>Seller:</strong> {{ item.seller_name }}</span>
+                    </p>
                 </div>
                 <div class="item-price">${{ "%.2f"|format(item.sale_price) }}</div>
             </div>
@@ -77,3 +82,4 @@
     </div>
 </div>
 {% endblock %}
+

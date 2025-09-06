@@ -1,186 +1,911 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About EcoFinds</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+{% extends "base.html" %}
+{% block title %}About Us - EcoFinds{% endblock %}
+{% block head %}
     <style>
-        :root {
-            --primary-color: #2ecc71; /* Eco-friendly green */
-            --secondary-color: #27ae60;
-        }
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Poppins', sans-serif, 'Segoe UI', Tahoma, Geneva, Verdana;
-        }
-        h1, h2, h3 {
-             font-family: 'Poppins', sans-serif;
-        }
-        .page-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    .about-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        min-height: 80vh;
+    }
+
+    .about-hero {
+        text-align: center;
+        margin-bottom: 4rem;
+        position: relative;
+        padding: 4rem 0;
+        background: linear-gradient(135deg, rgba(46, 204, 113, 0.1) 0%, rgba(39, 174, 96, 0.1) 100%);
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .about-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%232ecc71" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="%2327ae60" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="%232ecc71" opacity="0.05"/><circle cx="10" cy="60" r="0.5" fill="%2327ae60" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        animation: float 20s ease-in-out infinite;
+    }
+
+    .about-hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .about-title {
+        font-size: 4rem;
+        font-weight: 700;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+        animation: fadeInUp 0.8s ease-out;
+    }
+
+    .about-subtitle {
+        font-size: 1.3rem;
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto 2rem;
+        animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+
+    .about-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+        animation: fadeInUp 0.8s ease-out 0.4s both;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 1.5rem;
+        background: var(--surface-dark);
+        border-radius: 15px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+    }
+
+    .stat-item:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-heavy);
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .mission-section {
+        margin-bottom: 4rem;
+    }
+
+    .section-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .section-subtitle {
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .mission-content {
+        background: var(--surface-dark);
+        border-radius: 20px;
+        padding: 3rem;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-medium);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .mission-content::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: var(--gradient-primary);
+    }
+
+    .mission-text {
+        font-size: 1.2rem;
+        line-height: 1.8;
+        color: var(--text-primary);
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .mission-highlight {
+        background: rgba(46, 204, 113, 0.1);
+        padding: 2rem;
+        border-radius: 15px;
+        border-left: 4px solid var(--primary-color);
+        margin-top: 2rem;
+    }
+
+    .mission-highlight-text {
+        font-size: 1.1rem;
+        font-style: italic;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .how-it-works-section {
+        margin-bottom: 4rem;
+    }
+
+    .steps-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    .step-card {
+        background: var(--surface-dark);
+        border-radius: 20px;
+        padding: 2.5rem;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-medium);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .step-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: var(--gradient-primary);
+    }
+
+    .step-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-heavy);
+    }
+
+    .step-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .step-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: var(--gradient-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 2rem;
+        color: white;
+        transition: transform 0.3s ease;
+    }
+
+    .step-card:hover .step-icon {
+        transform: scale(1.1);
+    }
+
+    .step-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .step-subtitle {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+
+    .step-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .step-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .step-number {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--primary-color);
             color: white;
-            padding: 40px 0;
-            margin-bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    .step-text {
+        flex: 1;
+    }
+
+    .step-item-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.3rem;
+    }
+
+    .step-item-description {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+    }
+
+    .values-section {
+        margin-bottom: 4rem;
+    }
+
+    .values-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    .value-card {
+        background: var(--surface-dark);
+        border-radius: 15px;
+        padding: 2rem;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-medium);
+        transition: all 0.3s ease;
             text-align: center;
         }
-        h1 {
-            font-size: 3rem;
-            font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-        .navbar-brand-custom {
+
+    .value-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-heavy);
+    }
+
+    .value-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: rgba(46, 204, 113, 0.2);
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
             font-size: 1.5rem;
+    }
+
+    .value-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+    }
+
+    .value-description {
+        font-size: 0.95rem;
+        color: var(--text-secondary);
+        line-height: 1.6;
+    }
+
+    .team-section {
+        margin-bottom: 4rem;
+    }
+
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    .team-member {
+        background: var(--surface-dark);
+        border-radius: 15px;
+        padding: 2rem;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-medium);
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .team-member:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-heavy);
+    }
+
+    .member-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: var(--gradient-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 2rem;
+        color: white;
+    }
+
+    .member-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .member-role {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+    }
+
+    .member-description {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+    }
+
+    .cta-section {
+        background: var(--surface-dark);
+        border-radius: 20px;
+        padding: 3rem;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-medium);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: var(--gradient-primary);
+    }
+
+    .cta-title {
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+    }
+
+    .cta-description {
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .cta-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .cta-btn {
+        background: var(--gradient-primary);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
             font-weight: 600;
-            color: white !important;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .cta-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(46, 204, 113, 0.3);
+        color: white;
             text-decoration: none;
-            position: absolute;
-            top: 20px;
-            left: 30px;
+    }
+
+    .cta-btn.secondary {
+        background: transparent;
+        color: var(--text-secondary);
+        border: 2px solid var(--border-color);
+    }
+
+    .cta-btn.secondary:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        background: rgba(46, 204, 113, 0.1);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
         }
-        .mission-section {
-            background: #fff;
-            padding: 60px 0;
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
-        .mission-content {
-            max-width: 900px;
-            margin: 0 auto;
-            text-align: center;
-            line-height: 1.8;
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0px);
         }
-        .mission-content p {
-            font-size: 1.1rem;
-            color: #555;
+        50% {
+            transform: translateY(-10px);
         }
-        .how-it-works-section {
-            padding: 60px 0;
-            background-color: #f8f9fa;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .about-container {
+            padding: 1rem;
         }
-        .section-heading {
-            text-align: center;
-            color: var(--primary-color);
-            margin-bottom: 50px;
+
+        .about-title {
             font-size: 2.5rem;
-            font-weight: 600;
         }
-        .step-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-            padding: 30px;
-            text-align: center;
-            border-top: 5px solid var(--primary-color);
-            height: 100%;
+
+        .about-stats {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
         }
-        .step-icon {
-            font-size: 3rem;
-            color: var(--primary-color);
-            margin-bottom: 20px;
+
+        .steps-grid {
+            grid-template-columns: 1fr;
         }
-        .step-card h4 {
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: #333;
+
+        .values-grid {
+            grid-template-columns: 1fr;
         }
-        .step-card p {
-            color: #666;
-            font-size: 0.95rem;
+
+        .team-grid {
+            grid-template-columns: repeat(2, 1fr);
         }
-        .contact-section {
-            background: var(--primary-color);
-            padding: 50px 0;
-            text-align: center;
-            color: white;
+
+        .cta-buttons {
+            flex-direction: column;
+            align-items: center;
         }
-        .contact-heading {
-            margin-bottom: 20px;
-            font-weight: 600;
+
+        .cta-btn {
+            width: 100%;
+            max-width: 300px;
         }
-        .contact-email {
-            color: white;
-            text-decoration: none;
-            font-size: 1.2rem;
-            transition: opacity 0.3s ease;
-        }
-        .contact-email:hover {
-            opacity: 0.8;
-            text-decoration: none;
-            color: white;
         }
     </style>
-</head>
-<body>
-    <div class="page-header">
-        <a href="{{ url_for('home') }}" class="navbar-brand-custom">
-            <i class="fas fa-leaf"></i> EcoFinds
-        </a>
-        <h1>About Our Marketplace</h1>
+{% endblock %}
+
+{% block content %}
+<div class="about-container">
+    <!-- Hero Section -->
+    <section class="about-hero" data-aos="fade-up">
+        <div class="about-hero-content">
+            <h1 class="about-title">
+                <i class="fas fa-leaf"></i>
+                About EcoFinds
+            </h1>
+            <p class="about-subtitle">
+                We're revolutionizing the way people buy and sell pre-owned goods, creating a sustainable marketplace that benefits both people and the planet.
+            </p>
+            
+            <div class="about-stats">
+                <div class="stat-item" data-aos="zoom-in" data-aos-delay="100">
+                    <span class="stat-number" id="usersCount">10,000+</span>
+                    <span class="stat-label">Active Users</span>
+                </div>
+                <div class="stat-item" data-aos="zoom-in" data-aos-delay="200">
+                    <span class="stat-number" id="itemsCount">50,000+</span>
+                    <span class="stat-label">Items Listed</span>
+                </div>
+                <div class="stat-item" data-aos="zoom-in" data-aos-delay="300">
+                    <span class="stat-number" id="savedCO2">25,000</span>
+                    <span class="stat-label">CO₂ Saved (kg)</span>
+                </div>
+                <div class="stat-item" data-aos="zoom-in" data-aos-delay="400">
+                    <span class="stat-number" id="countriesCount">15+</span>
+                    <span class="stat-label">Countries</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="mission-section" data-aos="fade-up">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-bullseye"></i>
+                Our Mission
+            </h2>
+            <p class="section-subtitle">
+                Creating a sustainable future through conscious consumption
+            </p>
     </div>
 
-    <div class="mission-section">
-        <div class="container">
             <div class="mission-content">
-                <h2 class="section-heading">Our Mission</h2>
-                <p>
+            <p class="mission-text">
                     The vision for EcoFinds is to create a vibrant and trusted platform that revolutionizes the way people buy and sell pre-owned goods. We aim to foster a culture of sustainability by extending the lifecycle of products, reducing waste, and providing an accessible and convenient alternative to purchasing new items.
                 </p>
-                <p>
+            <p class="mission-text">
                     EcoFinds is the go-to destination for a conscious community seeking unique finds and responsible consumption, making sustainable choices easier for everyone.
+            </p>
+            
+            <div class="mission-highlight">
+                <p class="mission-highlight-text">
+                    "Every item sold on EcoFinds represents a step towards a more sustainable future, where waste is minimized and resources are maximized."
                 </p>
             </div>
         </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works-section" data-aos="fade-up">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-cogs"></i>
+                How It Works
+            </h2>
+            <p class="section-subtitle">
+                Simple steps to join the sustainable marketplace
+            </p>
     </div>
 
-    <div class="how-it-works-section">
-        <div class="container">
-            <h2 class="section-heading">How It Works</h2>
-            <div class="row">
-                <div class="col-md-6 mb-4">
-                    <div class="step-card">
-                         <i class="fas fa-store step-icon"></i>
-                        <h3>For Sellers</h3>
-                        <div class="text-left mt-4">
-                            <h4>1. Create an Account</h4>
-                            <p>Register in seconds to start your selling journey.</p>
-                            <h4>2. List Your Item</h4>
-                            <p>Go to "My Listings", click "Add New Listing", and upload a description and price. It's that simple!</p>
-                            <h4>3. Get Paid</h4>
-                            <p>Once a buyer purchases your item, you've successfully given it a new life and earned some cash.</p>
+        <div class="steps-grid">
+            <div class="step-card" data-aos="slide-up" data-aos-delay="100">
+                <div class="step-header">
+                    <div class="step-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <h3 class="step-title">For Sellers</h3>
+                    <p class="step-subtitle">Turn your unused items into cash</p>
+                </div>
+                <div class="step-content">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-text">
+                            <h4 class="step-item-title">Create an Account</h4>
+                            <p class="step-item-description">Register in seconds to start your selling journey.</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-text">
+                            <h4 class="step-item-title">List Your Item</h4>
+                            <p class="step-item-description">Go to "My Listings", click "Add New Listing", and upload a description and price. It's that simple!</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-text">
+                            <h4 class="step-item-title">Get Paid</h4>
+                            <p class="step-item-description">Once a buyer purchases your item, you've successfully given it a new life and earned some cash.</p>
+                        </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-md-6 mb-4">
-                    <div class="step-card">
-                        <i class="fas fa-shopping-basket step-icon"></i>
-                        <h3>For Buyers</h3>
-                        <div class="text-left mt-4">
-                            <h4>1. Browse & Discover</h4>
-                            <p>Explore thousands of unique second-hand items in our shop. Use search and filters to find exactly what you need.</p>
-                            <h4>2. Add to Cart</h4>
-                            <p>Found something you love? Click "Add to Cart" to save it while you continue to shop.</p>
-                            <h4>3. Secure Checkout</h4>
-                            <p>When you're ready, proceed to checkout for a safe and easy purchase process.</p>
+            <div class="step-card" data-aos="slide-up" data-aos-delay="200">
+                <div class="step-header">
+                    <div class="step-icon">
+                        <i class="fas fa-shopping-basket"></i>
+                    </div>
+                    <h3 class="step-title">For Buyers</h3>
+                    <p class="step-subtitle">Discover amazing pre-owned treasures</p>
+                </div>
+                <div class="step-content">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-text">
+                            <h4 class="step-item-title">Browse & Discover</h4>
+                            <p class="step-item-description">Explore thousands of unique second-hand items in our shop. Use search and filters to find exactly what you need.</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-text">
+                            <h4 class="step-item-title">Add to Cart</h4>
+                            <p class="step-item-description">Found something you love? Click "Add to Cart" to save it while you continue to shop.</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-text">
+                            <h4 class="step-item-title">Secure Checkout</h4>
+                            <p class="step-item-description">When you're ready, proceed to checkout for a safe and easy purchase process.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div class="contact-section">
-        <div class="container">
-            <h2 class="contact-heading">Get in Touch</h2>
-            <p>Have questions or feedback? We'd love to hear from you!</p>
-            <a href="mailto:contact@ecofinds.com" class="contact-email">
-                <i class="fas fa-envelope"></i> contact@ecofinds.com
-            </a>
+    <!-- Values Section -->
+    <section class="values-section" data-aos="fade-up">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-heart"></i>
+                Our Values
+            </h2>
+            <p class="section-subtitle">
+                The principles that guide everything we do
+            </p>
         </div>
+        
+        <div class="values-grid">
+            <div class="value-card" data-aos="zoom-in" data-aos-delay="100">
+                <div class="value-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <h3 class="value-title">Sustainability</h3>
+                <p class="value-description">We're committed to reducing waste and promoting circular economy principles through our platform.</p>
+            </div>
+            
+            <div class="value-card" data-aos="zoom-in" data-aos-delay="200">
+                <div class="value-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="value-title">Trust & Safety</h3>
+                <p class="value-description">We prioritize user safety and trust through verified accounts and secure payment systems.</p>
+            </div>
+            
+            <div class="value-card" data-aos="zoom-in" data-aos-delay="300">
+                <div class="value-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3 class="value-title">Community</h3>
+                <p class="value-description">We foster a supportive community where everyone can participate in sustainable commerce.</p>
+            </div>
+            
+            <div class="value-card" data-aos="zoom-in" data-aos-delay="400">
+                <div class="value-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h3 class="value-title">Innovation</h3>
+                <p class="value-description">We continuously improve our platform with cutting-edge technology and user-friendly features.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="team-section" data-aos="fade-up">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-users"></i>
+                Meet Our Team
+            </h2>
+            <p class="section-subtitle">
+                The passionate people behind EcoFinds
+            </p>
+        </div>
+        
+        <div class="team-grid">
+            <div class="team-member" data-aos="slide-up" data-aos-delay="100">
+                <div class="member-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3 class="member-name">Sarah Johnson</h3>
+                <p class="member-role">CEO & Founder</p>
+                <p class="member-description">Passionate about sustainability and creating positive environmental impact through technology.</p>
+            </div>
+            
+            <div class="team-member" data-aos="slide-up" data-aos-delay="200">
+                <div class="member-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3 class="member-name">Michael Chen</h3>
+                <p class="member-role">CTO</p>
+                <p class="member-description">Tech enthusiast focused on building scalable and secure platforms for sustainable commerce.</p>
+            </div>
+            
+            <div class="team-member" data-aos="slide-up" data-aos-delay="300">
+                <div class="member-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3 class="member-name">Emily Rodriguez</h3>
+                <p class="member-role">Head of Design</p>
+                <p class="member-description">Creative designer dedicated to creating beautiful and intuitive user experiences.</p>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+            <div class="team-member" data-aos="slide-up" data-aos-delay="400">
+                <div class="member-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3 class="member-name">David Kim</h3>
+                <p class="member-role">Head of Operations</p>
+                <p class="member-description">Operations expert ensuring smooth and efficient marketplace operations.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" data-aos="fade-up">
+        <h2 class="cta-title">Ready to Join the Movement?</h2>
+        <p class="cta-description">
+            Start your sustainable journey today and be part of the solution to reduce waste and promote conscious consumption.
+        </p>
+        <div class="cta-buttons">
+            {% if session['user_id'] %}
+                <a href="{{ url_for('shop') }}" class="cta-btn">
+                    <i class="fas fa-store"></i>
+                    Start Shopping
+                </a>
+                <a href="{{ url_for('my_listings') }}" class="cta-btn secondary">
+                    <i class="fas fa-plus"></i>
+                    Sell Items
+                </a>
+            {% else %}
+                <a href="{{ url_for('register') }}" class="cta-btn">
+                    <i class="fas fa-user-plus"></i>
+                    Join EcoFinds
+                </a>
+                <a href="{{ url_for('login') }}" class="cta-btn secondary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Sign In
+                </a>
+            {% endif %}
+        </div>
+    </section>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Animate numbers on scroll
+    function animateNumbers() {
+        const numbers = document.querySelectorAll('.stat-number');
+        
+        numbers.forEach(number => {
+            const target = number.textContent;
+            const isPercentage = target.includes('%');
+            const isPlus = target.includes('+');
+            const isComma = target.includes(',');
+            
+            let numericTarget = parseFloat(target.replace(/[^0-9.-]+/g, ''));
+            
+            if (isNaN(numericTarget)) return;
+            
+            const duration = 2000;
+            const increment = numericTarget / (duration / 16);
+            let current = 0;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= numericTarget) {
+                    current = numericTarget;
+                    clearInterval(timer);
+                }
+                
+                let displayValue = Math.floor(current);
+                
+                if (isComma && displayValue >= 1000) {
+                    displayValue = displayValue.toLocaleString();
+                }
+                
+                if (isPlus) {
+                    displayValue += '+';
+                }
+                
+                number.textContent = displayValue;
+            }, 16);
+        });
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate numbers after a short delay
+        setTimeout(animateNumbers, 1000);
+        
+        // Add hover effects to cards
+        const cards = document.querySelectorAll('.stat-item, .step-card, .value-card, .team-member');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+        
+        // Add click effects to CTA buttons
+        const ctaButtons = document.querySelectorAll('.cta-btn');
+        ctaButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Create ripple effect
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple');
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+    });
+
+    // Add ripple effect styles
+    const style = document.createElement('style');
+    style.textContent = `
+        .cta-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+{% endblock %}

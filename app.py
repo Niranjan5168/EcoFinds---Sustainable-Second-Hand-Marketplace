@@ -7,7 +7,18 @@ import dns.resolver
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
 bcrypt = Bcrypt(app)
+import os
+from werkzeug.utils import secure_filename
 
+# Configuration for File Uploads
+UPLOAD_FOLDER = 'static/images'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Helper function to check for allowed file types
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 # MySQL Configuration
 db_config = {
     'host': 'localhost',
@@ -322,44 +333,53 @@ def my_listings():
             cursor.close()
             conn.close()
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# (Your context_processor and other routes like login, register, shop, etc., remain the same)
+# ...
+
 @app.route('/add_listing', methods=['POST'])
 def add_listing():
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
     try:
-        # Fetch all new fields from the form
-        name = request.form.get('name')
-        category = request.form.get('category')
-        description = request.form.get('description')
-        market_price = request.form.get('market_price')
-        condition = request.form.get('condition')
-        brand = request.form.get('brand')
-        model = request.form.get('model')
-        year = request.form.get('year_of_manufacture')
-        color = request.form.get('color')
-        packaging = 'has_original_packaging' in request.form
-        manual = 'has_manual' in request.form
-        image_urls = request.form.get('image_urls')
+        form_data = request.form.to_dict()
+        uploaded_files = request.files.getlist('images')
         
+        filenames = []
+        for file in uploaded_files:
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                filenames.append(filename)
+        
+        image_urls_string = ", ".join(filenames)
+
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
         
         sql = """
             INSERT INTO products (
                 seller_id, name, category, description, market_price, `condition`, 
-                brand, model, year_of_manufacture, color, has_original_packaging, 
-                has_manual, image_url
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                brand, model, year_of_manufacture, dimensions, weight, material, color,
+                has_original_packaging, has_manual, working_condition_details, image_url
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         values = (
-            session['user_id'], name, category, description, market_price, condition,
-            brand, model, year if year else None, color, 
-            packaging, manual, image_urls
+            session['user_id'], form_data.get('name'), form_data.get('category'), form_data.get('description'), 
+            form_data.get('market_price'), form_data.get('condition'), form_data.get('brand'), 
+            form_data.get('model'), form_data.get('year_of_manufacture') or None, form_data.get('dimensions'), 
+            form_data.get('weight'), form_data.get('material'), form_data.get('color'),
+            'has_original_packaging' in form_data, 'has_manual' in form_data,
+            form_data.get('working_condition_details'), image_urls_string
         )
+        
         cursor.execute(sql, values)
         conn.commit()
-        flash('Your listing has been added!', 'success')
+        flash('Your listing has been added successfully!', 'success')
         
     except Exception as e:
         flash(f'Error adding listing: {str(e)}', 'error')
@@ -376,24 +396,24 @@ def edit_listing(product_id):
         return redirect(url_for('login'))
 
     try:
-        # Fetch all fields from the edit form
-        name = request.form.get('name')
-        category = request.form.get('category')
-        description = request.form.get('description')
-        market_price = request.form.get('market_price')
-        condition = request.form.get('condition')
-        brand = request.form.get('brand')
-        model = request.form.get('model')
-        year = request.form.get('year_of_manufacture')
-        color = request.form.get('color')
-        packaging = 'has_original_packaging' in request.form
-        manual = 'has_manual' in request.form
-        image_urls = request.form.get('image_urls')
+        form_data = request.form.to_dict()
+        uploaded_files = request.files.getlist('images')
+        
+        existing_images_str = form_data.get('existing_images', '')
+        filenames = existing_images_str.split(', ') if existing_images_str else []
+
+        for file in uploaded_files:
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                if filename not in filenames:
+                    filenames.append(filename)
+        
+        image_urls_string = ", ".join(filter(None, filenames)) # Filter out empty strings
 
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
 
-        # Security Check: Make sure the user owns this product
         cursor.execute("SELECT seller_id FROM products WHERE product_id = %s", (product_id,))
         product_owner = cursor.fetchone()
         if not product_owner or product_owner[0] != session['user_id']:
@@ -402,14 +422,19 @@ def edit_listing(product_id):
 
         sql = """
             UPDATE products SET
-                name = %s, category = %s, description = %s, market_price = %s, 
-                `condition` = %s, brand = %s, model = %s, year_of_manufacture = %s, 
-                color = %s, has_original_packaging = %s, has_manual = %s, image_url = %s
+                name = %s, category = %s, description = %s, market_price = %s, `condition` = %s,
+                brand = %s, model = %s, year_of_manufacture = %s, dimensions = %s, weight = %s,
+                material = %s, color = %s, has_original_packaging = %s, has_manual = %s,
+                working_condition_details = %s, image_url = %s
             WHERE product_id = %s
         """
         values = (
-            name, category, description, market_price, condition, brand, model,
-            year if year else None, color, packaging, manual, image_urls, product_id
+            form_data.get('name'), form_data.get('category'), form_data.get('description'), 
+            form_data.get('market_price'), form_data.get('condition'), form_data.get('brand'), 
+            form_data.get('model'), form_data.get('year_of_manufacture') or None, form_data.get('dimensions'), 
+            form_data.get('weight'), form_data.get('material'), form_data.get('color'),
+            'has_original_packaging' in form_data, 'has_manual' in form_data,
+            form_data.get('working_condition_details'), image_urls_string, product_id
         )
         cursor.execute(sql, values)
         conn.commit()
@@ -505,6 +530,15 @@ def view_cart():
         """
         cursor.execute(query, (session['user_id'],))
         cart_items = cursor.fetchall()
+
+        # --- THIS IS THE FIX ---
+        # Process the image URLs to get the first image for each cart item
+        for item in cart_items:
+            if item.get('image_url'):
+                item['first_image'] = item['image_url'].split(',')[0].strip()
+            else:
+                item['first_image'] = 'placeholder.jpg' # Default if no image
+
         total = sum(item['subtotal'] for item in cart_items)
         
     except Exception as e:
@@ -581,9 +615,12 @@ def purchase_history():
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
         
-        # Base query to get all items the user has purchased
+        # --- THIS QUERY IS UPGRADED ---
+        # It now selects p.image_url
         base_query = """
-            SELECT oi.product_name, oi.sale_price, p.category, o.order_date, u_seller.first_name as seller_name
+            SELECT 
+                oi.product_name, oi.sale_price, p.category, o.order_date, 
+                p.image_url, u_seller.first_name as seller_name
             FROM order_items oi
             JOIN orders o ON oi.o_no = o.order_no
             JOIN products p ON oi.pid = p.product_id
@@ -605,9 +642,16 @@ def purchase_history():
         order_clause = sort_options.get(sort_by, 'ORDER BY o.order_date DESC')
         
         final_query = f"{base_query} {order_clause}"
-        
         cursor.execute(final_query, tuple(params))
         purchased_items = cursor.fetchall()
+
+        # --- THIS LOGIC IS NEW ---
+        # Process image URLs to get the first image for each item
+        for item in purchased_items:
+            if item.get('image_url'):
+                item['first_image'] = item['image_url'].split(',')[0].strip()
+            else:
+                item['first_image'] = 'placeholder.jpg'
         
     except Exception as e:
         flash(f'Error fetching purchase history: {e}', 'error')
@@ -623,6 +667,7 @@ def purchase_history():
         search_query=search_query,
         current_sort=sort_by
     )
+
 @app.route('/remove_from_cart', methods=['POST'])
 def remove_from_cart():
     if 'user_id' not in session:
@@ -652,7 +697,7 @@ def remove_from_cart():
         if 'conn' in locals() and conn.is_connected():
             cursor.close()
             conn.close()
-            
+
 @app.route('/user_dashboard', methods=['GET', 'POST'])
 def user_dashboard():
     if 'user_id' not in session:
@@ -663,27 +708,46 @@ def user_dashboard():
 
     if request.method == 'POST':
         try:
+            # Get text data from form
             first_name = request.form['first_name']
             last_name = request.form['last_name']
             email = request.form['email']
             phone_number = request.form['phone_number']
+            
+            # Get current profile image to keep it if a new one isn't uploaded
+            cursor.execute("SELECT profile_image_url FROM users WHERE user_id = %s", (session['user_id'],))
+            user = cursor.fetchone()
+            profile_image = user['profile_image_url']
+
+            # Handle the file upload
+            if 'profile_picture' in request.files:
+                file = request.files['profile_picture']
+                if file and file.filename != '' and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    # To avoid conflicts, let's add user_id to the filename
+                    unique_filename = f"user_{session['user_id']}_{filename}"
+                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], unique_filename))
+                    profile_image = unique_filename # Update to the new filename
 
             update_query = """
-                UPDATE users SET first_name = %s, last_name = %s, email = %s, phone_number = %s
+                UPDATE users SET 
+                first_name = %s, last_name = %s, email = %s, 
+                phone_number = %s, profile_image_url = %s
                 WHERE user_id = %s
             """
-            cursor.execute(update_query, (first_name, last_name, email, phone_number, session['user_id']))
+            cursor.execute(update_query, (first_name, last_name, email, phone_number, profile_image, session['user_id']))
             conn.commit()
             flash('Profile updated successfully!', 'success')
             session['name'] = f"{first_name} {last_name}"
         except Exception as e:
-            flash('Error updating profile.', 'error')
+            flash(f'Error updating profile: {e}', 'error')
         finally:
             if conn.is_connected():
                 cursor.close()
                 conn.close()
         return redirect(url_for('user_dashboard'))
 
+    # GET request logic
     try:
         cursor.execute("SELECT * FROM users WHERE user_id = %s", (session['user_id'],))
         user = cursor.fetchone()
@@ -696,7 +760,6 @@ def user_dashboard():
             conn.close()
 
     return render_template('user_dashboard.html', user=user)
-
 # --- Original Inventory Management Routes (Preserved) ---
 @app.route('/inventory_dashboard')
 def inventory_dashboard():
