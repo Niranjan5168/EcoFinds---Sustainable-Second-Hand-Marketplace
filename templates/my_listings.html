@@ -1,151 +1,177 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My Listings</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body { font-family: 'Poppins', sans-serif; margin: 0; padding: 20px; background: #f0f2f5; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .header { background: white; padding: 20px 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
-        .header h1 { margin: 0; font-size: 24px; color: #2c3e50; }
-        .table-wrapper { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; }
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #f8fafc; padding: 15px 20px; text-align: left; font-weight: 600; color: #475569; font-size: 14px; }
-        td { padding: 15px 20px; border-top: 1px solid #e0e0e0; color: #334155; font-size: 14px; }
-        .product-image-placeholder { width: 60px; height: 60px; background: #e2e8f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #64748b; }
-        .btn { padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease; border: none; text-decoration: none; }
-        .btn-primary { background: #3b82f6; color: white; }
-        .btn-primary:hover { background: #2563eb; }
-        .btn-secondary { background: #64748b; color: white; }
-        .btn-secondary:hover { background: #475569; }
-        .btn-danger { background: #ef4444; color: white; }
-        .btn-danger:hover { background: #dc2626; }
-        .action-buttons { display: flex; gap: 8px; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { width: 500px; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); background-color: #ffffff; }
-        .modal-header { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0; }
-        .modal-header h2 { margin: 0; color: #2c3e50; font-size: 22px; }
-        .form-group { display: flex; flex-direction: column; margin-bottom: 15px; }
-        .form-group label { margin-bottom: 8px; font-weight: 500; color: #334155; font-size: 14px; }
-        .form-group input, .form-group select, .form-group textarea { padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px; font-family: 'Poppins', sans-serif; }
-        .form-group textarea { resize: vertical; min-height: 80px; }
-        .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
-        .no-results-message { text-align: center; padding: 40px 20px; }
-        .no-results-message i { font-size: 48px; color: #94a3b8; margin-bottom: 15px; }
-        .no-results-message h3 { color: #334155; margin: 10px 0; font-size: 20px; }
-        .no-results-message p { color: #64748b; margin: 5px 0; }
-        .alert { padding: 15px; border-radius: 8px; margin-bottom: 20px; }
-        .alert-success { background: #e8f5e9; color: #2e7d32; }
-        .alert-error { background: #ffebee; color: #c62828; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>My Listings</h1>
-            <button onclick="showModal('addListingModal')" class="btn btn-primary"><i class="fas fa-plus"></i> Add New Listing</button>
-        </div>
+{% extends "base.html" %}
+{% block title %}My Listings{% endblock %}
+{% block head %}
+<style>
+    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;}
+    .add-btn { background: #2ecc71; color: #121212; font-weight: 600; padding: 10px 20px; border-radius: 8px; text-decoration: none; cursor: pointer; border: none;}
+    .filter-bar { background-color: #1e1e1e; padding: 20px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #333; }
+    .filter-form { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: flex-end; }
+    .form-group input, .form-group select { padding: 12px; background-color: #2b2b2b; border: 1px solid #444; border-radius: 8px; color: #e0e0e0; font-size: 1em; }
+    .listings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
+    .product-card { background: #1e1e1e; border-radius: 12px; overflow: hidden; text-decoration: none; color: #e0e0e0; border: 1px solid #333; display: flex; flex-direction: column; }
+    .product-card img { width: 100%; height: 200px; object-fit: cover; background-color: #333;}
+    .product-info { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+    .product-name { font-size: 1.2em; font-weight: 600; margin: 5px 0; }
+    .product-price { font-size: 1.1em; color: #2ecc71; }
+    .product-status { font-size: 0.9em; color: #e53935; font-weight: 500; text-transform: uppercase;}
+    .product-status.available { color: #2ecc71; }
+    .card-actions { margin-top: auto; padding-top: 15px; border-top: 1px solid #333; display: flex; gap: 10px; }
+    .edit-btn, .delete-btn { flex: 1; padding: 8px; border-radius: 8px; text-align: center; text-decoration: none; border: none; cursor: pointer; font-weight: 500;}
+    .edit-btn { background-color: #333; color: #e0e0e0; }
+    .delete-btn { background-color: #e53935; color: white; width: 100%;}
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Image</th>
-                        <th>Title</th>
-                        <th>Category</th>
-                        <th>Price</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for product in products %}
-                    <tr>
-                        <td><div class="product-image-placeholder"><i class="fas fa-image"></i></div></td>
-                        <td>{{ product.name }}</td>
-                        <td>{{ product.category }}</td>
-                        <td>${{ "%.2f"|format(product.market_price) }}</td>
-                        <td class="action-buttons">
-                            <button class="btn btn-primary" 
-                                    data-id="{{ product.product_id }}" data-name="{{ product.name }}"
-                                    data-description="{{ product.description }}" data-category="{{ product.category }}"
-                                    data-price="{{ product.market_price }}" onclick="showEditModal(this)">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                            <form action="{{ url_for('delete_listing', product_id=product.product_id) }}" method="POST" style="display: inline;">
-                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')"><i class="fas fa-trash"></i> Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="5">
-                            <div class="no-results-message">
-                                <i class="fas fa-store-slash"></i>
-                                <h3>No listings yet!</h3>
-                                <p>Click "Add New Listing" to sell your first item.</p>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+    /* Modal Styles */
+    .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); }
+    .modal-content { background-color: #1e1e1e; margin: 5% auto; padding: 30px; border-radius: 12px; width: 90%; max-width: 600px; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #444; padding-bottom: 15px; margin-bottom: 20px; }
+    .close-btn { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
+    .modal-form { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-group-full { grid-column: 1 / -1; }
+    .modal-form label { margin-bottom: 8px; display: block; color: #aaa; }
+    .modal-form input, .modal-form select, .modal-form textarea { width: 100%; padding: 10px; background-color: #2b2b2b; border: 1px solid #444; border-radius: 8px; color: #e0e0e0; box-sizing: border-box;}
+    .checkbox-group { display: flex; align-items: center; gap: 10px; grid-column: 1 / -1; }
+    .modal-form button { grid-column: 1 / -1; background: #2ecc71; color: #121212; padding: 12px; border: none; border-radius: 8px; font-size: 1.1em; font-weight: 600; cursor: pointer; margin-top: 10px; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="header-bar">
+        <h1>My Listings</h1>
+        <button class="add-btn" onclick="showModal('addListingModal')"><i class="fas fa-plus"></i> Add New</button>
     </div>
 
-    <div id="addListingModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header"><h2>Add New Listing</h2></div>
-            <form action="{{ url_for('add_listing') }}" method="POST">
-                <div class="form-group"><label>Title</label><input type="text" name="name" required></div>
-                <div class="form-group"><label>Category</label><input type="text" name="category" required></div>
-                <div class="form-group"><label>Price ($)</label><input type="number" name="market_price" step="0.01" min="0" required></div>
-                <div class="form-group"><label>Description</label><textarea name="description"></textarea></div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="hideModal('addListingModal')">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Submit Listing</button>
+    <div class="filter-bar">
+        <form method="GET" action="{{ url_for('my_listings') }}" class="filter-form">
+            <div class="form-group">
+                <input type="text" name="search" placeholder="Search your listings..." value="{{ search_query or '' }}">
+            </div>
+            <div class="form-group">
+                <select name="sort_by" onchange="this.form.submit()">
+                    <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Sort By: Newest</option>
+                    <option value="price_asc" {% if current_sort == 'price_asc' %}selected{% endif %}>Sort By: Price Low to High</option>
+                    <option value="price_desc" {% if current_sort == 'price_desc' %}selected{% endif %}>Sort By: Price High to Low</option>
+                </select>
+            </div>
+        </form>
+    </div>
+
+    <div class="listings-grid">
+        {% for product in products %}
+            <div class="product-card">
+                <img src="{{ url_for('static', filename='images/' + product.first_image) if product.first_image and product.first_image != 'placeholder.jpg' else 'https://placehold.co/600x400/333/FFF?text=No+Image' }}" alt="{{ product.name }}">
+                <div class="product-info">
+                    <p class="product-status {{ 'available' if not product.is_sold else '' }}">{{ 'Available' if not product.is_sold else 'Sold' }}</p>
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <p class="product-price">${{ "%.2f"|format(product.market_price) }}</p>
+                    <p>{{ product.category }}</p>
+                    <div class="card-actions">
+                         <button class="edit-btn" data-product='{{ product | tojson | safe }}' onclick="showEditModal(this.dataset.product)"><i class="fas fa-edit"></i> Edit</button>
+                        <form action="{{ url_for('delete_listing', product_id=product.product_id) }}" method="POST" style="flex: 1;">
+                            <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this listing?')"><i class="fas fa-trash"></i> Delete</button>
+                        </form>
+                    </div>
                 </div>
-            </form>
-        </div>
+            </div>
+        {% else %}
+            <p>You have not listed any products yet. Click "Add New" to get started.</p>
+        {% endfor %}
     </div>
+</div>
 
-    <div id="editListingModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header"><h2>Edit Listing</h2></div>
-            <form id="editForm" method="POST">
-                <div class="form-group"><label>Title</label><input type="text" id="edit_name" name="name" required></div>
-                <div class="form-group"><label>Category</label><input type="text" id="edit_category" name="category" required></div>
-                <div class="form-group"><label>Price ($)</label><input type="number" id="edit_price" name="market_price" step="0.01" min="0" required></div>
-                <div class="form-group"><label>Description</label><textarea id="edit_description" name="description"></textarea></div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="hideModal('editListingModal')">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                </div>
-            </form>
+<!-- Add Listing Modal -->
+<div id="addListingModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Add a New Product</h2>
+            <span class="close-btn" onclick="hideModal('addListingModal')">&times;</span>
         </div>
+        <form action="{{ url_for('add_listing') }}" method="POST" class="modal-form">
+            <div class="form-group form-group-full"><label>Product Title</label><input type="text" name="name" required></div>
+            <div class="form-group"><label>Category</label><input type="text" name="category" required></div>
+            <div class="form-group"><label>Price ($)</label><input type="number" name="market_price" step="0.01" required></div>
+            <div class="form-group"><label>Condition</label><input type="text" name="condition" placeholder="e.g., Used, Like New"></div>
+            <div class="form-group"><label>Brand</label><input type="text" name="brand"></div>
+            <div class="form-group"><label>Model</label><input type="text" name="model"></div>
+            <div class="form-group"><label>Year of Manufacture</label><input type="number" name="year_of_manufacture" placeholder="e.g., 2020"></div>
+            <div class="form-group"><label>Color</label><input type="text" name="color"></div>
+            <div class="form-group"><label>Material</label><input type="text" name="material"></div>
+            <div class="form-group"><label>Dimensions (L,W,H)</label><input type="text" name="dimensions"></div>
+            <div class="form-group"><label>Weight</label><input type="text" name="weight"></div>
+            <div class="form-group form-group-full"><label>Image Filenames (comma-separated)</label><input type="text" name="image_urls" placeholder="e.g., image1.jpg, image2.jpg"></div>
+            <div class="form-group form-group-full"><label>Description</label><textarea name="description" rows="3"></textarea></div>
+            <div class="form-group form-group-full"><label>Working Condition Details</label><textarea name="working_condition_details" rows="2"></textarea></div>
+            <div class="checkbox-group"><input type="checkbox" id="add_packaging" name="has_original_packaging" value="1"><label for="add_packaging">Original Packaging Included</label></div>
+            <div class="checkbox-group"><input type="checkbox" id="add_manual" name="has_manual" value="1"><label for="add_manual">Manual/Instructions Included</label></div>
+            <button type="submit">Add Item</button>
+        </form>
     </div>
+</div>
 
-    <script>
-        function showModal(modalId) { document.getElementById(modalId).style.display = 'flex'; }
-        function hideModal(modalId) { document.getElementById(modalId).style.display = 'none'; }
-        function showEditModal(button) {
-            const form = document.getElementById('editForm');
-            form.action = `/edit_listing/${button.dataset.id}`;
-            document.getElementById('edit_name').value = button.dataset.name;
-            document.getElementById('edit_description').value = button.dataset.description;
-            document.getElementById('edit_category').value = button.dataset.category;
-            document.getElementById('edit_price').value = button.dataset.price;
-            showModal('editListingModal');
-        }
-        window.onclick = function(event) { if (event.target.classList.contains('modal')) { hideModal(event.target.id); } }
-    </script>
-</body>
-</html>
+<!-- Edit Listing Modal -->
+<div id="editListingModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Edit Listing</h2>
+            <span class="close-btn" onclick="hideModal('editListingModal')">&times;</span>
+        </div>
+        <form id="editForm" method="POST" class="modal-form">
+             <div class="form-group form-group-full"><label>Product Title</label><input type="text" id="edit_name" name="name" required></div>
+            <div class="form-group"><label>Category</label><input type="text" id="edit_category" name="category" required></div>
+            <div class="form-group"><label>Price ($)</label><input type="number" id="edit_price" name="market_price" step="0.01" required></div>
+            <div class="form-group"><label>Condition</label><input type="text" id="edit_condition" name="condition"></div>
+            <div class="form-group"><label>Brand</label><input type="text" id="edit_brand" name="brand"></div>
+            <div class="form-group"><label>Model</label><input type="text" id="edit_model" name="model"></div>
+            <div class="form-group"><label>Year of Manufacture</label><input type="number" id="edit_year" name="year_of_manufacture"></div>
+            <div class="form-group"><label>Color</label><input type="text" id="edit_color" name="color"></div>
+            <div class="form-group"><label>Material</label><input type="text" id="edit_material" name="material"></div>
+            <div class="form-group"><label>Dimensions (L,W,H)</label><input type="text" id="edit_dimensions" name="dimensions"></div>
+            <div class="form-group"><label>Weight</label><input type="text" id="edit_weight" name="weight"></div>
+            <div class="form-group form-group-full"><label>Image Filenames (comma-separated)</label><input type="text" id="edit_images" name="image_urls"></div>
+            <div class="form-group form-group-full"><label>Description</label><textarea id="edit_description" name="description" rows="3"></textarea></div>
+            <div class="form-group form-group-full"><label>Working Condition Details</label><textarea id="edit_working_details" name="working_condition_details" rows="2"></textarea></div>
+            <div class="checkbox-group"><input type="checkbox" id="edit_packaging" name="has_original_packaging" value="1"><label for="edit_packaging">Original Packaging Included</label></div>
+            <div class="checkbox-group"><input type="checkbox" id="edit_manual" name="has_manual" value="1"><label for="edit_manual">Manual/Instructions Included</label></div>
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function showModal(modalId) { document.getElementById(modalId).style.display = 'block'; }
+    function hideModal(modalId) { document.getElementById(modalId).style.display = 'none'; }
+    
+    function showEditModal(productData) {
+        const product = JSON.parse(productData);
+        const form = document.getElementById('editForm');
+        form.action = `/edit_listing/${product.product_id}`;
+        
+        document.getElementById('edit_name').value = product.name || '';
+        document.getElementById('edit_category').value = product.category || '';
+        document.getElementById('edit_price').value = product.market_price || '';
+        document.getElementById('edit_condition').value = product.condition || '';
+        document.getElementById('edit_brand').value = product.brand || '';
+        document.getElementById('edit_model').value = product.model || '';
+        document.getElementById('edit_year').value = product.year_of_manufacture || '';
+        document.getElementById('edit_color').value = product.color || '';
+        document.getElementById('edit_material').value = product.material || '';
+        document.getElementById('edit_dimensions').value = product.dimensions || '';
+        document.getElementById('edit_weight').value = product.weight || '';
+        document.getElementById('edit_images').value = product.image_url || '';
+        document.getElementById('edit_description').value = product.description || '';
+        document.getElementById('edit_working_details').value = product.working_condition_details || '';
+        document.getElementById('edit_packaging').checked = product.has_original_packaging;
+        document.getElementById('edit_manual').checked = product.has_manual;
+
+        showModal('editListingModal');
+    }
+
+    window.onclick = function(event) {
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+</script>
+{% endblock %}

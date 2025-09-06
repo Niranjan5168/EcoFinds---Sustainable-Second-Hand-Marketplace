@@ -7,39 +7,92 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { font-family: 'Poppins', sans-serif; margin: 0; background-color: #f0f2f5; }
-        .navbar { background: white; padding: 15px 40px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        body { font-family: 'Poppins', sans-serif; margin: 0; background-color: #121212; color: #e0e0e0; }
+        .navbar {
+            background: #1e1e1e;
+            padding: 15px 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
         .navbar-brand { font-size: 1.5em; font-weight: 600; color: #2ecc71; text-decoration: none; }
-        .navbar-links a { color: #555; text-decoration: none; margin-left: 20px; font-weight: 500; }
-        .navbar-links a:hover { color: #2ecc71; }
+        .nav-right { display: flex; align-items: center; gap: 25px; }
+        /* Desktop links are now removed from the main bar */
+        .desktop-links { display: none; }
+        .nav-icons { display: flex; align-items: center; gap: 25px; }
+        .nav-icons a { color: #e0e0e0; text-decoration: none; font-size: 1.2em; position: relative; }
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background: #e53935;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.7em;
+            font-weight: bold;
+        }
+        /* Menu toggle is now always visible */
+        .menu-toggle { display: block; font-size: 1.5em; background: none; border: none; color: #e0e0e0; cursor: pointer; }
+        .collapsible-menu {
+            display: none;
+            position: absolute;
+            top: 70px;
+            right: 20px; /* Positioned near the toggle button */
+            background: #1e1e1e;
+            width: 250px;
+            flex-direction: column;
+            padding: 10px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            border-radius: 12px;
+            border: 1px solid #333;
+        }
+        .collapsible-menu.active { display: flex; }
+        .collapsible-menu a { padding: 15px 30px; text-align: left; color: #e0e0e0; text-decoration: none; display: block; }
+        .collapsible-menu a:hover { background-color: #333; }
         .content { max-width: 1200px; margin: 20px auto; padding: 20px; }
-        .alert { padding: 15px; border-radius: 8px; margin-bottom: 20px; }
-        .alert-success { background: #e8f5e9; color: #2e7d32; }
-        .alert-error { background: #ffebee; color: #c62828; }
+        
+        /* Media query is no longer needed for the links */
     </style>
     {% block head %}{% endblock %}
 </head>
 <body>
     <nav class="navbar">
         <a href="{{ url_for('shop') }}" class="navbar-brand"><i class="fas fa-leaf"></i> EcoFinds</a>
-        <div class="navbar-links">
-            <a href="{{ url_for('shop') }}"><i class="fas fa-store"></i> Shop</a>
-            {% if session['user_id'] %}
-                {% if session['role'] and session['role'].strip().lower() == 'inventory manager' %}
-                    <a href="{{ url_for('inventory_dashboard') }}">Manager Dashboard</a>
+        <div class="nav-right">
+            <!-- Desktop links div is now removed -->
+            <div class="nav-icons">
+                 <a href="{{ url_for('view_cart') }}">
+                    <i class="fas fa-shopping-cart"></i>
+                    {% if cart_count > 0 %}<span class="cart-count">{{ cart_count }}</span>{% endif %}
+                </a>
+                {% if session['user_id'] %}
+                    <a href="{{ url_for('user_dashboard') }}"><i class="fas fa-user-circle"></i></a>
                 {% else %}
-                    <a href="{{ url_for('my_listings') }}">My Listings</a>
-                    <a href="{{ url_for('purchase_history') }}">Purchase History</a>
-                    <a href="{{ url_for('user_dashboard') }}">My Profile</a>
+                    <a href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt"></i></a>
                 {% endif %}
-                <a href="{{ url_for('view_cart') }}"><i class="fas fa-shopping-cart"></i> Cart</a>
-                <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
-            {% else %}
-                <a href="{{ url_for('login') }}">Login</a>
-                <a href="{{ url_for('register') }}">Register</a>
-            {% endif %}
+            </div>
+            <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
         </div>
     </nav>
+    <div class="collapsible-menu" id="collapsibleMenu">
+        <a href="{{ url_for('shop') }}">Shop</a>
+        <a href="{{ url_for('about') }}">About</a>
+        <a href="{{ url_for('contact') }}">Contact</a>
+        <hr style="border-color: #444; margin: 10px 20px;">
+        {% if session['user_id'] %}
+            <a href="{{ url_for('my_listings') }}">My Listings</a>
+            <a href="{{ url_for('purchase_history') }}">Purchase History</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}">Register</a>
+        {% endif %}
+    </div>
 
     <main class="content">
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -51,5 +104,11 @@
         {% endwith %}
         {% block content %}{% endblock %}
     </main>
+    <script>
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('collapsibleMenu').classList.toggle('active');
+        });
+    </script>
 </body>
 </html>
+

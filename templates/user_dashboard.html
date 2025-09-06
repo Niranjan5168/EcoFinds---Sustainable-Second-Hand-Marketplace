@@ -1,37 +1,164 @@
 {% extends "base.html" %}
 {% block title %}My Profile{% endblock %}
-{% block content %}
+{% block head %}
 <style>
-    .dashboard-container { background: white; padding: 40px; border-radius: 15px; max-width: 700px; margin: auto; }
-    .form-group { margin-bottom: 20px; }
-    label { font-weight: bold; display: block; margin-bottom: 5px; }
-    input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; }
-    button { background-color: #2ecc71; color: white; padding: 12px 15px; border: none; cursor: pointer; border-radius: 5px; }
+    .profile-container {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 30px;
+        background-color: #1e1e1e;
+        padding: 30px;
+        border-radius: 12px;
+        border: 1px solid #333;
+    }
+    /* Left Sidebar */
+    .profile-sidebar {
+        text-align: center;
+        padding: 20px;
+        background-color: #2b2b2b;
+        border-radius: 12px;
+    }
+    .profile-picture {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background-color: #444;
+        margin: 0 auto 20px;
+        border: 4px solid #2ecc71;
+    }
+    .profile-sidebar h2 {
+        margin: 0 0 10px 0;
+    }
+    .profile-sidebar .user-email {
+        color: #aaa;
+        font-size: 0.9em;
+        word-wrap: break-word;
+    }
+    .edit-profile-btn {
+        background: none;
+        border: 1px solid #2ecc71;
+        color: #2ecc71;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 20px;
+        width: 100%;
+    }
+    .nav-section {
+        margin-top: 30px;
+    }
+    .nav-button {
+        display: block;
+        background-color: #333;
+        color: #e0e0e0;
+        padding: 15px;
+        text-decoration: none;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        text-align: left;
+        font-weight: 500;
+    }
+    .nav-button:hover {
+        background-color: #444;
+    }
+
+    /* Right Content Area */
+    .profile-content {
+        padding: 20px;
+    }
+    .form-container {
+        display: none; /* Hidden by default */
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #aaa;
+    }
+    .form-group input {
+        width: 100%;
+        padding: 12px;
+        background-color: #2b2b2b;
+        border: 1px solid #444;
+        border-radius: 8px;
+        color: #e0e0e0;
+        font-size: 1em;
+    }
+    .save-btn {
+        background: #2ecc71;
+        color: #121212;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+        .profile-container {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
-<div class="dashboard-container">
-    <h2>Edit Your Profile</h2>
-    {% if user %}
-    <form method="POST">
-        <div class="form-group">
-            <label for="first_name">First Name</label>
-            <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" required>
+{% endblock %}
+{% block content %}
+<div class="profile-container">
+    <aside class="profile-sidebar">
+        <div class="profile-picture"></div>
+        {% if user %}
+            <h2>{{ user.first_name }}</h2>
+            <p class="user-email">{{ user.email }}</p>
+        {% endif %}
+        <button class="edit-profile-btn" onclick="toggleEditForm()">Edit Profile</button>
+
+        <div class="nav-section">
+            <h4>Navigations</h4>
+            <a href="{{ url_for('my_listings') }}" class="nav-button">My Listings</a>
+            <a href="{{ url_for('purchase_history') }}" class="nav-button">My Purchases</a>
         </div>
-        <div class="form-group">
-            <label for="last_name">Last Name</label>
-            <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" required>
+    </aside>
+
+    <main class="profile-content">
+        <h2>User Information</h2>
+        <p>This section contains your profile details. Click "Edit Profile" to make changes.</p>
+        
+        <div id="editFormContainer" class="form-container">
+            <h3>Edit Your Details</h3>
+            {% if user %}
+            <form method="POST">
+                <div class="form-group">
+                    <label for="first_name">Display Name</label>
+                    <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" required>
+                </div>
+                 <!-- last_name is required by DB but not shown, so we include it as a hidden field -->
+                <input type="hidden" name="last_name" value="{{ user.last_name or '' }}">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" value="{{ user.email }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone_number">Phone Number</label>
+                    <input type="tel" id="phone_number" name="phone_number" value="{{ user.phone_number }}" required>
+                </div>
+                <button type="submit" class="save-btn">Save Changes</button>
+            </form>
+            {% else %}
+            <p>Could not load user data.</p>
+            {% endif %}
         </div>
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" value="{{ user.email }}" required>
-        </div>
-        <div class="form-group">
-            <label for="phone_number">Phone Number</label>
-            <input type="tel" id="phone_number" name="phone_number" value="{{ user.phone_number }}" required>
-        </div>
-        <button type="submit">Save Changes</button>
-    </form>
-    {% else %}
-    <p>Could not load user data.</p>
-    {% endif %}
+    </main>
 </div>
+<script>
+    function toggleEditForm() {
+        const formContainer = document.getElementById('editFormContainer');
+        if (formContainer.style.display === 'none' || formContainer.style.display === '') {
+            formContainer.style.display = 'block';
+        } else {
+            formContainer.style.display = 'none';
+        }
+    }
+</script>
 {% endblock %}

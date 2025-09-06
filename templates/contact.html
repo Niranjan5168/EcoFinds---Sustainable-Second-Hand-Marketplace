@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Contact Us{% endblock %}
+{% block head %}
+<style>
+    .contact-container {
+        background: #1e1e1e;
+        padding: 40px;
+        border-radius: 12px;
+        text-align: center;
+        max-width: 800px;
+        margin: auto;
+    }
+    .contact-container h1 {
+        color: #2ecc71;
+        margin-bottom: 20px;
+    }
+    .contact-container p {
+        font-size: 1.1em;
+        line-height: 1.7;
+        margin-bottom: 30px;
+    }
+    .contact-email {
+        font-weight: 600;
+        font-size: 1.2em;
+        color: #2ecc71;
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="contact-container">
+    <h1>Get in Touch</h1>
+    <p>Have questions, feedback, or need support? We'd love to hear from you! Reach out to our team, and we'll get back to you as soon as possible.</p>
+    <a href="mailto:contact@ecofinds.com" class="contact-email">
+        <i class="fas fa-envelope"></i> contact@ecofinds.com
+    </a>
+</div>
+{% endblock %}

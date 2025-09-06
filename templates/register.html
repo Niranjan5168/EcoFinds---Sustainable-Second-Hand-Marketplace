@@ -1,29 +1,166 @@
-{% extends "base.html" %}
-{% block title %}Register - EcoFinds{% endblock %}
-{% block content %}
-<style>
-    .register-container { background-color: #ffffff; padding: 40px; border-radius: 15px; max-width: 450px; margin: 50px auto; }
-    .form-group { margin-bottom: 20px; }
-    label { font-weight: bold; display: block; margin-bottom: 5px; }
-    input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; }
-    button { background-color: #2ecc71; color: white; padding: 12px 15px; border: none; cursor: pointer; width: 100%; border-radius: 5px; }
-</style>
-<div class="register-container">
-    <h2>Create an EcoFinds Account</h2>
-    <form method="POST">
-        <div class="form-group"><label for="first_name">First Name:</label><input type="text" id="first_name" name="first_name" required></div>
-        <div class="form-group"><label for="last_name">Last Name:</label><input type="text" id="last_name" name="last_name" required></div>
-        <div class="form-group"><label for="email">Email:</label><input type="email" id="email" name="email" required></div>
-        <div class="form-group"><label for="phone_number">Phone Number:</label><input type="tel" id="phone_number" name="phone_number" required></div>
-        <div class="form-group"><label for="password">Password:</label><input type="password" id="password" name="password" required></div>
-        <div class="form-group">
-            <label for="role">Role:</label>
-            <select id="role" name="role" required>
-                <option value="User">User</option>
-                <option value="Inventory Manager">Inventory Manager</option>
-            </select>
-        </div>
-        <button type="submit">Register</button>
-    </form>
-</div>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - EcoFinds</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #1e1e1e;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .logo-placeholder {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #333;
+            margin: 0 auto 30px;
+            border: 2px solid #444;
+        }
+        h2 {
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #aaa;
+        }
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: #2b2b2b;
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 15px;
+        }
+        input:focus {
+            outline: none;
+            border-color: #2ecc71;
+        }
+        button {
+            background: #2ecc71;
+            color: #121212;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background: #27ae60;
+        }
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .alert-error {
+            background-color: #5c2c2c;
+            color: #ff8a8a;
+        }
+        .login-link {
+            margin-top: 20px;
+            color: #aaa;
+        }
+        .login-link a {
+            color: #2ecc71;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        #password-match-error {
+            color: #ff8a8a;
+            font-size: 0.9em;
+            text-align: left;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-placeholder"></div>
+        <h2>Sign Up Page</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" id="registerForm">
+            <div class="form-group">
+                <label for="display_name">Display Name</label>
+                <input type="text" id="display_name" name="display_name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+                <div id="password-match-error">Passwords do not match.</div>
+            </div>
+            <button type="submit">Sign Up</button>
+        </form>
+        <p class="login-link">Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+    </div>
+
+    <script>
+        const form = document.getElementById('registerForm');
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirm_password');
+        const errorDiv = document.getElementById('password-match-error');
+
+        form.addEventListener('submit', function(event) {
+            if (password.value !== confirmPassword.value) {
+                event.preventDefault(); // Stop form submission
+                errorDiv.style.display = 'block';
+                confirmPassword.style.borderColor = '#5c2c2c';
+            }
+        });
+
+        confirmPassword.addEventListener('input', function() {
+            if (password.value === confirmPassword.value) {
+                errorDiv.style.display = 'none';
+                confirmPassword.style.borderColor = '#444';
+            } else {
+                errorDiv.style.display = 'block';
+                confirmPassword.style.borderColor = '#5c2c2c';
+            }
+        });
+    </script>
+</body>
+</html>
